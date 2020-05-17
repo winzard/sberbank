@@ -9,6 +9,8 @@ with open(report_file_name, 'r') as fp:
         transactions = soup.find_all(attrs={"class": "trs_head"})
         for transaction in transactions:
             name = transaction.find(attrs={"class": "trs_name"}).string.strip()
+            if name[0] == "\"" and name[-1] == "\"":
+                name = name.strip("\"")
             data = transaction.find(attrs={"class": "idate"})['data-date']
             summ_tag = transaction.find(attrs={"class": "trs_sum"})
             income = summ_tag.find(attrs={"class": "trs_st-refill"})
@@ -16,4 +18,4 @@ with open(report_file_name, 'r') as fp:
             if not income:
                 summ = '-' + summ
             category = transaction.find(attrs={"class": "icat"}).get_text().strip()
-            print(name, ";", data, ";", summ, ";", category, file=output)
+            print(";".join([name, data, summ, category]), file=output)
